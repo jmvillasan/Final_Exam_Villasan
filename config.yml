@@ -1,0 +1,38 @@
+---
+- hosts: all
+  become: true
+  tasks:
+    - name: Install Apache on Ubuntu
+      apt: pkg=apache2 state=latest
+      when: ansible_os_family == "Debian"
+
+    - name: Install Apache on CentOS
+      yum: pkg=httpd state=latest
+      when: ansible_os_family == "RedHat"
+
+    - name: Start Apache Service
+      service: name=apache2 state=started enabled=yes
+      when: ansible_os_family == "Debian"
+
+    - name: Start Apache Service
+      service: name=httpd state=started enabled=yes
+      when: ansible_os_family == "RedHat"
+
+    - name: Install Nagios in Ubuntu
+      apt:
+        name:
+          - nagios4
+        state: latest
+        update_cache: yes
+      when: ansible_distribution == "Ubuntu"
+
+    - name: Install Nagios in CentOS
+      dnf:
+        name:
+          - nagios
+        state: latest
+      when: ansible_distribution == "CentOS"
+
+    - name: Change Motd Banner
+      debug:
+        msg: "Ansible is Managed by VILLASAN"
